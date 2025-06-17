@@ -67,7 +67,9 @@ while true do
 
   allData = { usage = usageData, items = quantities }
 
-  http.post("http://localhost:5000/ae2", textutils.serialiseJSON(allData), {["Content-Type"]= "application/json"})
+
+  -- change the next line
+  http.post("http://localhost:5000/ae2", textutils.serialiseJSON(allData), {["Content-Type"] = "application/json", ["X-API-KEY"] = "your_api_key_here"})
   log("Request made. Now sleeping")
   sleep(5)
 end

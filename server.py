@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 
 from flask import *
 
+load_dotenv()
 app = Flask(__name__)
 
 # https://stackoverflow.com/a/37331139
@@ -25,8 +26,6 @@ def toHuman(num):
     return ("%.2f" % num).rstrip('0').rstrip('.') + "Y"
 
 def initDBClient() -> InfluxDBClient:
-    load_dotenv()
-
     if not os.getenv("DB_HOST"):
         raise Exception("DB_HOST not set in .env")
     
@@ -106,9 +105,8 @@ def ae2_get():
 # Used by the CC:Tweaked script
 @app.route('/ae2', methods=["POST"])
 def ae2_post():
-    if request.headers.getlist("X-Forwarded-For"): # if this is set, it comes from nginx
-        return 'This endpoint is only availabl to the loca machine itself', 403
-
+    if request.headers.get("X-API-KEY") != os.environ.get("API_KEY"):
+        return 'Unauthorized', 403
     process_ae2_json(request.json)
     return '', 200
 
